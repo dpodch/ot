@@ -7,6 +7,7 @@
 %define debug_package %{nil}
 
 %define install_dir	/opt/excelport
+%define xlnt_lib	/usr/local/lib
 
 Summary:	excelport daemon
 
@@ -51,12 +52,14 @@ echo "RPM_BUILD_DIR=$RPM_BUILD_DIR"
 echo "buildroot=%buildroot"
 %__rm -rf %buildroot
 %__mkdir_p %buildroot%{install_dir}
+%__mkdir_p %buildroot%{xlnt_lib}
 
 cd src
 
 # service
 
 %__cp -f build/excelport_srv %buildroot%{install_dir}/
+%__cp -f %{xlnt_lib}/libxlnt.so* %buildroot%{xlnt_lib}/
 
 # all configs
 %__cp -f build/excelport_srv.xml %buildroot%{install_dir}/
@@ -74,6 +77,7 @@ rm -rf %buildroot
 %defattr(0755,root,root,-)
 %dir %attr(0755,root,root) %{install_dir}
 %defattr(0755,root,root,-)
+%{xlnt_lib}/libxlnt.so*
 %{install_dir}/excelport_srv
 %config %{install_dir}/excelport_srv.xml
 
