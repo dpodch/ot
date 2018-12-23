@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+	<!-- Настройки -->
+	<rest>
+	    <port>12100</port>
+	</rest>
+</settings>

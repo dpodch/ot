@@ -1,0 +1,31 @@
+/**
+  @def VERSION_MAJOR
+  Мажорная версия
+*/
+#define VERSION_MAJOR @excelport_srv_VERSION_MAJOR@
+/**
+  @def VERSION_MINOR
+  Минорная версия
+*/
+#define VERSION_MINOR @excelport_srv_VERSION_MINOR@
+/**
+  @def VERSION_PATCH
+  Версия патча
+*/
+#define VERSION_PATCH @excelport_srv_VERSION_PATCH@
+/**
+  @def VERSION_BUILD
+  Версии сборки
+*/
+#define VERSION_BUILD @excelport_srv_VERSION_BUILD@
+/**
+ @def SVN_REVISION
+ Svn ревизия
+*/
+#define SVN_REVISION @excelport_srv_SVN_REVISION@
+
+/**
+  @def BUILD_TYPE
+  Тип сборки - Debug/Release
+*/
+#define BUILD_TYPE @CMAKE_BUILD_TYPE@
