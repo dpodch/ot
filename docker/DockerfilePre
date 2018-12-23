@@ -1,7 +1,0 @@
-FROM centos/devtoolset-6-toolchain-centos7
-
-USER root
-RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-RUN yum install -y cmake3
-RUN yum install -y --setopt=tsflags=nodocs qt-devel libxml2-devel git cyrus-sasl-plain cyrus-sasl-md5 rpm-build gcc gcc-c++ curl-devel
-RUN yum clean all -y
