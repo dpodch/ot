@@ -14,6 +14,10 @@ public:
 	void setName(const QString &value);
 	void setPeopleList(const QList<People> &value);
 
+	void add(const People &value);
+
+	QString getName() const;
+
 private:
 	QList<People> peopleList;
 	QString name;

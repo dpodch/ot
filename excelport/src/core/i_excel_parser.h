@@ -8,5 +8,5 @@
 class IExcelParser
 {
 public:
-	virtual QList<Firm> parse(const QByteArray &ba, bool *isOk, QString *errMsg) const = 0;
+	virtual QList<Firm*> parse(const QByteArray &ba, bool *isOk, QString *errMsg) const = 0;
 };

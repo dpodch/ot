@@ -73,7 +73,7 @@ void Excel2XmlHandler::storeBody()
 {
 	QByteArray ba = request->body();
 
-	if (ba.isEmpty())
+	if (ba.size() < 100)
 	{
 		sendReceipt(*response, QHttpResponse::STATUS_BAD_REQUEST,
 					QByteArray("post body is empty"), "text/plain");
@@ -91,6 +91,9 @@ void Excel2XmlHandler::storeBody()
 		map.insert("firm_list", fList);
 
 		QJson::Serializer s;
+		s.setFullEscapeEnabled(false);
+
+		qDebug() << s.serialize(map);
 		sendReceipt(*response, QHttpResponse::STATUS_OK, s.serialize(map), "text/json");
 	}
 	else

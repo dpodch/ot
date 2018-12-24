@@ -39,3 +39,13 @@ void Vacancy::setPeopleList(const QList<People> &value)
 {
 	peopleList = value;
 }
+
+void Vacancy::add(const People &value)
+{
+	peopleList.append(value);
+}
+
+QString Vacancy::getName() const
+{
+	return name;
+}

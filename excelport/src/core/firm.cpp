@@ -11,7 +11,7 @@ Firm::Firm()
 
 Firm::~Firm()
 {
-
+	qDeleteAll(sList);
 }
 
 QVariant Firm::toVariant() const
@@ -19,9 +19,9 @@ QVariant Firm::toVariant() const
 	QVariantMap map;
 
 	QVariantList list;
-	Q_FOREACH (Subdivision s, sList)
+	Q_FOREACH (Subdivision *s, sList)
 	{
-		list.append(s.toVariant());
+		list.append(s->toVariant());
 	}
 
 	map.insert("name", name);
@@ -34,19 +34,30 @@ void Firm::setName(const QString &value)
 	name = value;
 }
 
-void Firm::setSList(const QList<Subdivision> &value)
+void Firm::setSList(const QList<Subdivision *> &value)
 {
+	qDeleteAll(sList);
 	sList = value;
 }
 
-QVariantList Firm::toVariantList(const QList<Firm> &flist)
+void Firm::add(Subdivision *value)
+{
+	sList.append(value);
+}
+
+QVariantList Firm::toVariantList(const QList<Firm *> &flist)
 {
 	QVariantList res;
 
-	Q_FOREACH (Firm f, flist)
+	Q_FOREACH (Firm* f, flist)
 	{
-		res.append(f.toVariant());
+		res.append(f->toVariant());
 	}
 
 	return res;
+}
+
+QString Firm::getName() const
+{
+	return name;
 }

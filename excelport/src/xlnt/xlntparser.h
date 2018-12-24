@@ -8,5 +8,5 @@ public:
 	XlntParser();
 	virtual ~XlntParser();
 
-	virtual QList<Firm> parse(const QByteArray &ba, bool *isOk, QString *errMsg) const;
+	virtual QList<Firm*> parse(const QByteArray &ba, bool *isOk, QString *errMsg) const;
 };

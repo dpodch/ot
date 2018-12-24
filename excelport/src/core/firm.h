@@ -12,12 +12,14 @@ public:
 
 	QVariant toVariant() const;
 	void setName(const QString &value);
-	void setSList(const QList<Subdivision> &value);
+	void setSList(const QList<Subdivision*> &value);
+	void add(Subdivision* value);
 
+	static QVariantList toVariantList(const QList<Firm*> &flist);
 
-	static QVariantList toVariantList(const QList<Firm> &flist);
+	QString getName() const;
 
 private:
 	QString name;
-	QList<Subdivision> sList;
+	QList<Subdivision*> sList;
 };
