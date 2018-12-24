@@ -67,10 +67,8 @@ void Excel2XmlHandler::sendReceipt(QHttpResponse &response,
 	Q_EMIT finished();
 }
 
-#include <xlnt/xlnt.hpp>
-#include <iostream>
-#include <sstream>
-#include <QFile>
+#include <QJson/Serializer>
+#include <xlnt/xlntparser.h>
 void Excel2XmlHandler::storeBody()
 {
 	QByteArray ba = request->body();
@@ -82,21 +80,23 @@ void Excel2XmlHandler::storeBody()
 		return;
 	}
 
-	std::istringstream in(std::string(ba.data(), ba.size()));
-	xlnt::workbook excelFile;
-	excelFile.load(in);
+	bool isOk = true;
+	QString errmsg = "";
+	QVariantList fList =  Firm::toVariantList(XlntParser().parse(ba, &isOk, &errmsg));
 
-	xlnt::worksheet ws = excelFile.active_sheet();
-	std::string cellValue = ws.cell("A1").value<std::string>();
+	if (isOk == true)
+	{
+		QVariantMap map;
+		map.insert("version", "1");
+		map.insert("firm_list", fList);
 
-	QDomDocument doc;
-		doc.appendChild(
-			doc.createProcessingInstruction(
-				"xml", "version=\"1.0\" encoding=\"utf-8\""));
-
-	QDomElement root = doc.createElement("first_cell_value");
-	root.setAttribute("A1", QString(cellValue.c_str()));
-	doc.appendChild(root);
-
-	sendReceipt(*response, QHttpResponse::STATUS_OK, doc.toByteArray(), "text/xml");
+		QJson::Serializer s;
+		sendReceipt(*response, QHttpResponse::STATUS_OK, s.serialize(map), "text/json");
+	}
+	else
+	{
+		QString msg = "Error parse xls format:" + errmsg;
+		sendReceipt(*response, QHttpResponse::STATUS_BAD_REQUEST,
+					msg.toUtf8(), "text/plain");
+	}
 }

@@ -1,11 +1,20 @@
-#ifndef VACANCY_H
-#define VACANCY_H
+#pragma once
 
+#include <QList>
 
-class vacancy
+#include <core/people.h>
+
+class Vacancy
 {
 public:
-	vacancy();
-};
+	Vacancy();
+	virtual ~Vacancy();
 
-#endif // VACANCY_H
+	QVariant toVariant() const;
+	void setName(const QString &value);
+	void setPeopleList(const QList<People> &value);
+
+private:
+	QList<People> peopleList;
+	QString name;
+};

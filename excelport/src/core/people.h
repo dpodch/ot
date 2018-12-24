@@ -1,11 +1,27 @@
-#ifndef PEOPLE_H
-#define PEOPLE_H
+#pragma once
 
+#include <QString>
+#include <QDateTime>
 
 class People
 {
 public:
 	People();
-};
+	virtual ~People();
 
-#endif // PEOPLE_H
+	QVariant toVariant() const;
+
+	void setName(const QString &value);
+	void setPatronymic(const QString &value);
+	void setSurname(const QString &value);
+	void setBirthday(const QDate &value);
+	void setEmployment_date(const QDate &value);
+
+private:
+	QString name;
+	QString patronymic;
+	QString surname;
+	QDate birthday;
+	QDate employment_date;
+
+};

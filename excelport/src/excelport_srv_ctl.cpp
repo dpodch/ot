@@ -138,7 +138,6 @@ EPSrvCtl::localStartDaemon()
 	RestService* rest = RestService::getInstance();
 	rest->setListenPort(EPortCfg.getRestPort());
 	rest->setServiceName("EXCEL_PORT");
-	rest->registerHandler(new DefaultHandler(), "xlsconver", "test");
 	rest->registerHandler(new Excel2XmlHandler(), "xls", "test");
 	QTimer::singleShot(500, rest, SLOT(start()));
 }

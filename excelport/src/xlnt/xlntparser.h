@@ -1,11 +1,12 @@
-#ifndef XLNTPARSER_H
-#define XLNTPARSER_H
+#pragma once
 
+#include <core/i_excel_parser.h>
 
-class XlntParser
+class XlntParser :public IExcelParser
 {
 public:
 	XlntParser();
-};
+	virtual ~XlntParser();
 
-#endif // XLNTPARSER_H
+	virtual QList<Firm> parse(const QByteArray &ba, bool *isOk, QString *errMsg) const;
+};

@@ -62,6 +62,13 @@ set(excelport_srv_SOURCES
 	excel2xml_handler.cpp
 
 	config/excelport_srv_config.cpp
+
+	core/people.cpp
+	core/vacancy.cpp
+	core/subdivision.cpp
+	core/firm.cpp
+
+	xlnt/xlntparser.cpp
 )
 
 set(excelport_srv_HEADERS
@@ -72,6 +79,9 @@ set(excelport_srv_HEADERS
 	config/excelport_srv_config.h
 )
 
+set (NOT_QT_SHARED_HEADERS ${NOT_QT_SHARED_HEADERS}
+	core/i_excel_parser.h
+	)
 #INCLUDE_SUBDIR(qtsingleapplication qtsingleapplication)
 #INCLUDE_SUBDIR(rest rest)
 #INCLUDE_SUBDIR(qhttpserver qhttpserver)
