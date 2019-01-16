@@ -3,10 +3,10 @@
 #include <QList>
 #include <QByteArray>
 
-#include <core/firm.h>
+#include <core/group.h>
 
 class IExcelParser
 {
 public:
-	virtual QList<Firm*> parse(const QByteArray &ba, bool *isOk, QString *errMsg) const = 0;
+	virtual QList<Group*> parse(const QByteArray &ba, bool *isOk, QString *errMsg) const = 0;
 };

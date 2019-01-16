@@ -82,13 +82,17 @@ void Excel2XmlHandler::storeBody()
 
 	bool isOk = true;
 	QString errmsg = "";
-	QVariantList fList =  Firm::toVariantList(XlntParser().parse(ba, &isOk, &errmsg));
+
+	QList<Group *> groups = XlntParser().parse(ba, &isOk, &errmsg);
+	QVariantList fList =  Group::toVariantList(groups);
+	qDeleteAll(groups);
+	groups.clear();
 
 	if (isOk == true)
 	{
 		QVariantMap map;
 		map.insert("version", "1");
-		map.insert("firm_list", fList);
+		map.insert("group_list", fList);
 
 		QJson::Serializer s;
 		s.setFullEscapeEnabled(false);

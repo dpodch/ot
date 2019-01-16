@@ -24,8 +24,9 @@ std::vector<xlnt::range_reference> thinOut(const std::vector<xlnt::range_referen
 
 	std::vector<xlnt::range_reference> res;
 
-	Q_FOREACH (xlnt::range_reference r, vector)
+	for (uint i = 0; i < vector.size(); i++)
 	{
+		xlnt::range_reference r = vector.at(i);
 		int bot = r.bottom_left().row();
 		int top = r.top_right().row();
 
@@ -76,9 +77,9 @@ std::vector<xlnt::range_reference> thinOut(const std::vector<xlnt::range_referen
 	return res;
 }
 
-QList<Firm*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMsg) const
+QList<Group *> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMsg) const
 {
-	QList<Firm*> res;
+	QList<Group*> res;
 	try
 	{
 		std::istringstream in(std::string(ba.data(), ba.size()));
@@ -89,8 +90,8 @@ QList<Firm*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMsg
 
 		std::vector<xlnt::range_reference> range = thinOut(ws.merged_ranges());
 
-		Firm* cfirm = NULL;;
-		Subdivision* cSub = NULL;
+		Group* cfirm = NULL;;
+		Group* cSub = NULL;
 
 		Q_FOREACH (xlnt::range_reference r, range)
 		{
@@ -100,9 +101,9 @@ QList<Firm*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMsg
 			{
 				if (cSub != NULL)
 				{
-					cfirm->add(cSub);
+					cfirm->addGroup(cSub);
 				}
-				cSub = new Subdivision();
+				cSub = new Group();
 				cSub->setName(QString(cell.value<std::string>().c_str()));
 			}
 			else if (r.width() == 7)
@@ -111,7 +112,7 @@ QList<Firm*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMsg
 				{
 					res.append(cfirm);
 				}
-				cfirm = new Firm();
+				cfirm = new Group();
 				cfirm->setName(QString(cell.value<std::string>().c_str()));
 			}
 			else if (r.width() == 4)
@@ -120,38 +121,35 @@ QList<Firm*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMsg
 												  r.bottom_left().row())
 										  .value<std::string>().c_str());
 
-				Vacancy* v = cSub->getVacancy(vacancy);
+				Group* v = cSub->findGroup(vacancy);
 				if (v == NULL)
 				{
-					v = new Vacancy;
+					v = new Group;
 					v->setName(vacancy);
-					cSub->add(v);
+					cSub->addGroup(v);
 				}
 
 				QStringList fio = QString(cell.value<std::string>().c_str()).split(" ");
 				if (fio.size() >= 2)
 				{
-					People p;
-					p.setName(fio.value(1));
-					p.setSurname(fio.value(0));
-					p.setPatronymic(fio.value(2));
-					v->add(p);
+					People* p = new People;
+					p->setName(fio.value(1));
+					p->setSurname(fio.value(0));
+					p->setPatronymic(fio.value(2));
+					v->addPeople(p);
 				}
 			}
 		}
 
 		if (cSub != NULL)
 		{
-			cfirm->add(cSub);
+			cfirm->addGroup(cSub);
 		}
 
 		if (cfirm != NULL)
 		{
 			res.append(cfirm);
 		}
-
-		std::string cellValue = ws.cell("A1").value<std::string>();
-		qDebug() << "First cell = " << QString(cellValue.c_str());
 	}
 	catch(xlnt::exception &e)
 	{

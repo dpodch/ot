@@ -64,9 +64,7 @@ set(excelport_srv_SOURCES
 	config/excelport_srv_config.cpp
 
 	core/people.cpp
-	core/vacancy.cpp
-	core/subdivision.cpp
-	core/firm.cpp
+	core/group.cpp
 
 	xlnt/xlntparser.cpp
 )
