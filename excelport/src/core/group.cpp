@@ -44,11 +44,11 @@ QVariant Group::toVariant() const
 	map.insert("name", name);
 	if (!plistVar.isEmpty())
 	{
-		map.insert("people_list", plistVar);
+		map.insert("position_list", plistVar);
 	}
 	else if (!glistVar.isEmpty())
 	{
-		map.insert("group_list", glistVar);
+		map.insert("division_list", glistVar);
 	}
 
 	return map;

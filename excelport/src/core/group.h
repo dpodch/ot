@@ -30,6 +30,7 @@ public:
 	static QVariantList toVariantList(const QList<Group*> &groups);
 
 private:
+	QString gTagName;
 	QString name;
 	QList<People*> peopleList;
 	QList<Group*> groupList;

@@ -67,6 +67,8 @@ set(excelport_srv_SOURCES
 	core/group.cpp
 
 	xlnt/xlntparser.cpp
+	xlnt/format1_parser.cpp
+	xlnt/format2_parser.cpp
 )
 
 set(excelport_srv_HEADERS
@@ -79,6 +81,7 @@ set(excelport_srv_HEADERS
 
 set (NOT_QT_SHARED_HEADERS ${NOT_QT_SHARED_HEADERS}
 	core/i_excel_parser.h
+	xlnt/i_format_parser.h
 	)
 #INCLUDE_SUBDIR(qtsingleapplication qtsingleapplication)
 #INCLUDE_SUBDIR(rest rest)

@@ -1,11 +1,13 @@
-#ifndef FORMAT1_PARSER_H
-#define FORMAT1_PARSER_H
+#pragma once
 
+#include <xlnt/i_format_parser.h>
 
-class format1_parser
+class Format1Parser :public IFormatParser
 {
 public:
-	format1_parser();
-};
+	Format1Parser() {}
+	virtual ~Format1Parser() {}
 
-#endif // FORMAT1_PARSER_H
+	virtual QMap<int, ExcelItem> parse(const xlnt::worksheet &ws) const override final;
+
+};

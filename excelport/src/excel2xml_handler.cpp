@@ -92,12 +92,12 @@ void Excel2XmlHandler::storeBody()
 	{
 		QVariantMap map;
 		map.insert("version", "1");
-		map.insert("group_list", fList);
+		map.insert("firm_list", fList);
 
 		QJson::Serializer s;
 		s.setFullEscapeEnabled(false);
 
-		qDebug() << s.serialize(map);
+		//qDebug() << s.serialize(map);
 		sendReceipt(*response, QHttpResponse::STATUS_OK, s.serialize(map), "text/json");
 	}
 	else
