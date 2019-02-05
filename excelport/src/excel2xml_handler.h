@@ -1,6 +1,22 @@
 #pragma once
 
+#include <QMutex>
+
 #include <rest/http_handler.h>
+
+class QueryStat
+{
+public:
+
+	void increment(bool iserr);
+	int getQueryCount() const;
+	int getErrorCount() const;
+
+private:
+	mutable QMutex mutex;
+	int count = 0;
+	int errCount = 0;
+};
 
 class Excel2XmlHandler : public HttpHandler
 {
@@ -22,7 +38,8 @@ private:
 private Q_SLOTS:
 	void storeBody();
 
-	private:
+private:
 	QHttpRequest *request;
 	QHttpResponse* response;
+	static QueryStat *stat;
 };

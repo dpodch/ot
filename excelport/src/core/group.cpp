@@ -33,10 +33,12 @@ QVariant Group::toVariant() const
 		plistVar.append(p->toVariant());
 	}
 
+	bool positionCantains = false;
 	if (plistVar.isEmpty())
 	{
 		Q_FOREACH (Group *g, groupList)
 		{
+			positionCantains = !(g->getPeopleList().isEmpty());
 			glistVar.append(g->toVariant());
 		}
 	}
@@ -44,11 +46,18 @@ QVariant Group::toVariant() const
 	map.insert("name", name);
 	if (!plistVar.isEmpty())
 	{
-		map.insert("position_list", plistVar);
+		map.insert("peoples_list", plistVar);
 	}
 	else if (!glistVar.isEmpty())
 	{
-		map.insert("division_list", glistVar);
+		if (positionCantains == true)
+		{
+			map.insert("positions_list", glistVar);
+		}
+		else
+		{
+			map.insert("divisions_list", glistVar);
+		}
 	}
 
 	return map;

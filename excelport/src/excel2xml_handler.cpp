@@ -5,7 +5,12 @@
 #include <QDomDocument>
 #include <QDomElement>
 
+#include <QJson/Serializer>
+#include <xlnt/xlntparser.h>
+
 #include "excel2xml_handler.h"
+
+QueryStat* Excel2XmlHandler::stat = new QueryStat;
 
 Excel2XmlHandler::Excel2XmlHandler()
 {
@@ -31,12 +36,15 @@ void Excel2XmlHandler::handleRequest(QHttpRequest *request, QHttpResponse *respo
 
 	if (request->method() == QHttpRequest::HTTP_POST)
 	{
+		stat->increment(false);
 		request->storeBody();
 		connect(request, SIGNAL(end()), this, SLOT(storeBody()));
 	}
 	else if (request->method() == QHttpRequest::HTTP_GET)
 	{
-		sendReceipt(*response, QHttpResponse::STATUS_OK, "Echo OK", "text/plain");
+		QString msg("Total count: %1\nError count: %2");
+		msg = msg.arg(stat->getQueryCount()).arg(stat->getErrorCount());
+		sendReceipt(*response, QHttpResponse::STATUS_OK, msg.toUtf8(), "text/plain");
 	}
 	else
 	{
@@ -67,8 +75,6 @@ void Excel2XmlHandler::sendReceipt(QHttpResponse &response,
 	Q_EMIT finished();
 }
 
-#include <QJson/Serializer>
-#include <xlnt/xlntparser.h>
 void Excel2XmlHandler::storeBody()
 {
 	QByteArray ba = request->body();
@@ -92,7 +98,7 @@ void Excel2XmlHandler::storeBody()
 	{
 		QVariantMap map;
 		map.insert("version", "1");
-		map.insert("firm_list", fList);
+		map.insert("firms_list", fList);
 
 		QJson::Serializer s;
 		s.setFullEscapeEnabled(false);
@@ -102,8 +108,34 @@ void Excel2XmlHandler::storeBody()
 	}
 	else
 	{
-		QString msg = "Error parse xls format:" + errmsg;
+		stat->increment(true);
+		QString msg = "Error parse xls format " + errmsg;
 		sendReceipt(*response, QHttpResponse::STATUS_BAD_REQUEST,
 					msg.toUtf8(), "text/plain");
 	}
+}
+
+void QueryStat::increment(bool iserr)
+{
+	QMutexLocker locker(&mutex);
+	if (iserr == true)
+	{
+		errCount++;
+	}
+	else
+	{
+		count++;
+	}
+}
+
+int QueryStat::getQueryCount() const
+{
+	QMutexLocker locker(&mutex);
+	return count;
+}
+
+int QueryStat::getErrorCount() const
+{
+	QMutexLocker locker(&mutex);
+	return errCount;
 }

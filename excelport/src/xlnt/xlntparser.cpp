@@ -118,20 +118,22 @@ QList<Group*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMs
 
 				const auto &cGroup = tmpGroup.last();
 
-				Group *g = NULL;
-				People *p = NULL;
 				double rateCount = 0.;
 
 				if (item.gName.isEmpty() == false)
 				{
-					g = new Group;
-					g->setName(item.gName);
-					cGroup.first->addGroup(g);
-					tmpGroup.append(QPair<Group*, double>(g, item.rateCount));
+					Group *g = cGroup.first->findGroup(item.gName);
+					if (g == NULL)
+					{
+						g = new Group;
+						g->setName(item.gName);
+						cGroup.first->addGroup(g);
+						tmpGroup.append(QPair<Group*, double>(g, item.rateCount));
+					}
 
 					if (item.pName.isEmpty() == false)
 					{
-						p = createPeople(item.pName);
+						People *p = createPeople(item.pName);
 						if (p == NULL)
 						{
 							parserOk = false;
@@ -149,7 +151,7 @@ QList<Group*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMs
 				else if (item.pName.isEmpty() == false)
 				{
 
-					p = createPeople(item.pName);
+					People *p = createPeople(item.pName);
 					if (p == NULL)
 					{
 						parserOk = false;
@@ -183,6 +185,7 @@ QList<Group*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMs
 				parserErrMessage.append("Rows size is empty");
 				parserOk = false;
 			}
+			*isOk = parserOk;
 
 			if (parserOk == true)
 			{
