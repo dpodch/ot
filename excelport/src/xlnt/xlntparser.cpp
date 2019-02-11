@@ -62,6 +62,19 @@ People* XlntParser::createPeople(const QString &str) const
 		p->setPatronymic(fio.value(2));
 	}
 
+	QStringList fields = QString(str).split(",");
+	if (fields.size() >= 2)
+	{
+		p->setBirthday(QDate::fromString(fields.value(1).simplified(),
+										 "dd.MM.yyyy"));
+	}
+
+	if (fields.size() >= 3)
+	{
+		p->setEmployment_date(QDate::fromString(fields.value(2).simplified(),
+												"dd.MM.yyyy"));
+	}
+
 	return p;
 }
 

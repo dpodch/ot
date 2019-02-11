@@ -1,7 +1,7 @@
 %define name			excelport
 %define version_major	0
 %define version_minor	1
-%define version_patch	0
+%define version_patch	1
 %define	version_build	1
 
 %define debug_package %{nil}

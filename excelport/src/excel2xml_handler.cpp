@@ -25,7 +25,7 @@ HttpHandler *Excel2XmlHandler::clone()
 QString Excel2XmlHandler::helpText() const
 {
 	QString str = QString("%1")
-			.arg(trUtf8("Выполняет преобразоание формата excel в xml"));
+			.arg(trUtf8("Выполняет преобразование формата excel в json"));
 	return str;
 }
 
@@ -36,14 +36,16 @@ void Excel2XmlHandler::handleRequest(QHttpRequest *request, QHttpResponse *respo
 
 	if (request->method() == QHttpRequest::HTTP_POST)
 	{
-		stat->increment(false);
 		request->storeBody();
 		connect(request, SIGNAL(end()), this, SLOT(storeBody()));
 	}
 	else if (request->method() == QHttpRequest::HTTP_GET)
 	{
-		QString msg("Total count: %1\nError count: %2");
-		msg = msg.arg(stat->getQueryCount()).arg(stat->getErrorCount());
+		QString msg("Total count: %1\nError count: %2\nlast query(utc): %3\navg size: %4");
+		msg = msg.arg(stat->getQueryCount())
+				.arg(stat->getErrorCount())
+				.arg(stat->getLastQueryTime().toString(Qt::ISODate))
+				.arg(stat->getAvgSize());
 		sendReceipt(*response, QHttpResponse::STATUS_OK, msg.toUtf8(), "text/plain");
 	}
 	else
@@ -83,8 +85,17 @@ void Excel2XmlHandler::storeBody()
 	{
 		sendReceipt(*response, QHttpResponse::STATUS_BAD_REQUEST,
 					QByteArray("post body is empty"), "text/plain");
+		stat->increment(true, ba.size());
 		return;
 	}
+	else if (ba.size() > 100 * 1000 * 1000)
+	{
+		stat->increment(true, ba.size());
+		sendReceipt(*response, QHttpResponse::STATUS_BAD_REQUEST,
+					QByteArray("file is very large!! Max < 100MB"), "text/plain");
+		return;
+	}
+
 
 	bool isOk = true;
 	QString errmsg = "";
@@ -103,21 +114,38 @@ void Excel2XmlHandler::storeBody()
 		QJson::Serializer s;
 		s.setFullEscapeEnabled(false);
 
-		//qDebug() << s.serialize(map);
 		sendReceipt(*response, QHttpResponse::STATUS_OK, s.serialize(map), "text/json");
+		stat->increment(false, ba.size());
 	}
 	else
 	{
-		stat->increment(true);
+		stat->increment(true, ba.size());
 		QString msg = "Error parse xls format " + errmsg;
 		sendReceipt(*response, QHttpResponse::STATUS_BAD_REQUEST,
 					msg.toUtf8(), "text/plain");
 	}
 }
 
-void QueryStat::increment(bool iserr)
+void QueryStat::increment(bool iserr, uint64_t size)
 {
 	QMutexLocker locker(&mutex);
+	lastQueryTime = QDateTime::currentDateTimeUtc();
+
+	if (pos == 100)
+	{
+		pos = 0;
+	}
+
+	if (sizeList.size() > pos)
+	{
+		sizeList.replace(pos, size);
+	}
+	else
+	{
+		sizeList.append(size);
+	}
+	pos++;
+
 	if (iserr == true)
 	{
 		errCount++;
@@ -138,4 +166,25 @@ int QueryStat::getErrorCount() const
 {
 	QMutexLocker locker(&mutex);
 	return errCount;
+}
+
+uint64_t QueryStat::getAvgSize() const
+{
+	uint64_t res = 0;
+	Q_FOREACH (uint64_t i, sizeList)
+	{
+		res += i;
+	}
+
+	if (sizeList.size() > 0)
+	{
+		res /= sizeList.size();
+	}
+
+	return res;
+}
+
+QDateTime QueryStat::getLastQueryTime() const
+{
+	return lastQueryTime;
 }
