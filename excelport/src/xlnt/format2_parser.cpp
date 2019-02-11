@@ -30,7 +30,7 @@ QMap<int, ExcelItem> Format2Parser::parse(const xlnt::worksheet &ws) const
 		auto cell = ws.cell(xlnt::column_t(fcNum), rowNum);
 
 		if ( (fcNum == 3)
-				&& (lcNum == 12)
+				&& ( (lcNum == 12) || (lcNum == 10) )
 				&& (cell.data_type() == xlnt::cell_type::shared_string)
 				&& (cell.font().bold() == true) )
 		{
