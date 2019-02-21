@@ -27,8 +27,13 @@ bool decrement(QList< QPair<Group*, double> > *groups, double value)
 {
 	for (int i = 0; i < groups->size(); i++)
 	{
-		auto g = groups->at(i);
+		auto g = groups->value(i);
+
 		g.second = g.second - value;
+		if (g.second < 0.0001)
+		{
+			g.second = 0;
+		}
 		groups->replace(i, g);
 	}
 
@@ -149,6 +154,7 @@ QList<Group*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMs
 						People *p = createPeople(item.pName);
 						if (p == NULL)
 						{
+							qCritical() << "Error parse FIO";
 							parserOk = false;
 							parserErrMessage.append(
 										QString("Error format FIO:") + item.pName);
@@ -167,6 +173,7 @@ QList<Group*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMs
 					People *p = createPeople(item.pName);
 					if (p == NULL)
 					{
+						qCritical() << "Error parse FIO";
 						parserOk = false;
 						parserErrMessage.append(
 									QString("Error format FIO:") + item.pName);
@@ -181,6 +188,7 @@ QList<Group*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMs
 
 				if (decrement(&tmpGroup, rateCount) == false)
 				{
+					qCritical() << "Error decrement";
 					parserErrMessage.append("Error excel format");
 					parserOk = false;
 					break;
@@ -189,12 +197,14 @@ QList<Group*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMs
 
 			if (tmpGroup.isEmpty() == false)
 			{
-				parserErrMessage.append("Error excel format");
+				qCritical() << "Group is empty";
+				parserErrMessage.append("Error excel format 2");
 				parserOk = false;
 			}
 
 			if (rows.size() == 0)
 			{
+				qCritical() << "Rows is empty";
 				parserErrMessage.append("Rows size is empty");
 				parserOk = false;
 			}
