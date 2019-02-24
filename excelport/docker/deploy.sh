@@ -66,4 +66,4 @@ mkdir  ${REPO_DIR}
 
 build_dir "../dist"
 copy_rpm excelport ${REPO_DIR}
-copy_rpm libfsqt ${REPO_DIR}
+cp ../dist/deps/served/el7/libserved-1.4.3-DS1.x86_64.rpm ${REPO_DIR}

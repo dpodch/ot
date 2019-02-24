@@ -2,7 +2,7 @@
 %define version_major	0
 %define version_minor	1
 %define version_patch	1
-%define	version_build	1
+%define	version_build	2
 
 %define debug_package %{nil}
 
@@ -19,8 +19,8 @@ URL:			http://forsys.ru
 Group:			Applications/Multimedia
 Source:			%{name}-%{version}.tgz
 BuildRoot:		%_tmppath/%name-%version-%release-root
-Requires:		libfsqt >= 1.23.1
-BuildRequires:	cmake >= 2.8.0, libfsqt-devel
+Requires:		libserved
+BuildRequires:	cmake >= 2.8.0, libserved
 Provides:		%{name} = %{version}
 
 %description
@@ -61,9 +61,6 @@ cd src
 %__cp -f build/excelport_srv %buildroot%{install_dir}/
 %__cp -f %{xlnt_lib}/libxlnt.so* %buildroot%{xlnt_lib}/
 
-# all configs
-%__cp -f build/excelport_srv.xml %buildroot%{install_dir}/
-
 %pre
 
 %post
@@ -79,7 +76,6 @@ rm -rf %buildroot
 %defattr(0755,root,root,-)
 %{xlnt_lib}/libxlnt.so*
 %{install_dir}/excelport_srv
-%config %{install_dir}/excelport_srv.xml
 
 %changelog
 

@@ -204,8 +204,9 @@ QList<Group*> XlntParser::parse(const QByteArray &ba, bool *isOk, QString *errMs
 
 			if (rows.size() == 0)
 			{
-				qCritical() << "Rows is empty";
-				parserErrMessage.append("Rows size is empty");
+				const QString msg = "Rows is empty";
+				qWarning() << msg << " Use next parser";
+				parserErrMessage.append(msg);
 				parserOk = false;
 			}
 			*isOk = parserOk;

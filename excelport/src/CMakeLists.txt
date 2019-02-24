@@ -20,12 +20,8 @@ if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	message(FATAL_ERROR "Windows build not supported")
 endif()
 
-find_package(Qt4 REQUIRED)
-find_package(FSQt REQUIRED)
+find_package(Qt5Core REQUIRED)
 
-fs_use_cxx11()
-
-######### END #########
 ######### script to include subprojects #########
 macro(INCLUDE_SUBDIR SUBDIR CMAKENAME)
 	    set(current_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${SUBDIR})
@@ -58,11 +54,9 @@ endif(NOT excelport_srv_SVN_REVISION)
 set(excelport_srv_SOURCES
 	main.cpp
 
-	excelport_srv_ctl.cpp
-	excel2xml_handler.cpp
+	excelport_srv.cpp
 
-	config/excelport_srv_config.cpp
-
+	core/query_stat.cpp
 	core/people.cpp
 	core/group.cpp
 
@@ -72,20 +66,13 @@ set(excelport_srv_SOURCES
 )
 
 set(excelport_srv_HEADERS
-
-	excelport_srv_ctl.h
-	excel2xml_handler.h
-
-	config/excelport_srv_config.h
+	excelport_srv.h
 )
 
 set (NOT_QT_SHARED_HEADERS ${NOT_QT_SHARED_HEADERS}
 	core/i_excel_parser.h
 	xlnt/i_format_parser.h
 	)
-#INCLUDE_SUBDIR(qtsingleapplication qtsingleapplication)
-#INCLUDE_SUBDIR(rest rest)
-#INCLUDE_SUBDIR(qhttpserver qhttpserver)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -106,15 +93,10 @@ set(excelport_srv_LINKS
 		${SHARED_LINKS})
 ######### END #########
 
-######### include libfsqt  ################
-include_directories(${FSQt_INCLUDES})
-set(SHARED_EXTRALIBS ${SHARED_EXTRALIBS} ${FSQt_LIBRARIES})
-add_definitions(${FSQt_DEFINITIONS})
-
 ######### include xint  ################
 include_directories("/usr/local/include/xlnt")
 link_directories("/usr/local/lib/")
-set(SHARED_EXTRALIBS ${SHARED_EXTRALIBS} "-lxlnt")
+set(SHARED_EXTRALIBS ${SHARED_EXTRALIBS} "-lxlnt" "-lserved" "-lboost_system" "-lboost_program_options")
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Debug" AND NOT VERBOSE_COMPILER)
 	set(VERBOSE_COMPILER "-Wall -Wextra -g -O2")
@@ -135,14 +117,14 @@ set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTSQL TRUE)
 set(QT_USE_QTXML TRUE)
 set(QT_USE_QTXMLPATTERNS TRUE)
-include(${QT_USE_FILE})
+#include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
 set(excelport_srv_EXTRALIBS ${excelport_srv_EXTRALIBS} ${QT_LIBRARIES})
 #########
 
 ######### generate qt files #########
 # generate moc_*.cpp files
-QT4_WRAP_CPP(excelport_srv_HEADERS_MOC ${excelport_srv_HEADERS})
+QT5_WRAP_CPP(excelport_srv_HEADERS_MOC ${excelport_srv_HEADERS})
 ######### END #########
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake_config.h.in
@@ -156,8 +138,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/excelport_srv.xml
 
 message(STATUS "excelport_srv_EXTRALIBS = ${excelport_srv_EXTRALIBS}")
 
-add_executable(excelport_srv ${excelport_srv_SOURCES} ${excelport_srv_HEADERS_MOC}
+add_executable(excelport_srv WIN32 ${excelport_srv_SOURCES} ${excelport_srv_HEADERS_MOC}
 						${excelport_srv_RESOURCES} ${NOT_QT_SHARED_HEADERS})
 target_link_libraries(excelport_srv ${excelport_srv_LINKS} ${excelport_srv_EXTRALIBS}
-	${SHARED_EXTRALIBS})
+	${SHARED_EXTRALIBS} Qt5::Core)
 

@@ -1,6 +1,7 @@
 
 #include <QDebug>
 
+#include <QTextCodec>
 #include <xlnt/xlnt.hpp>
 #include <utils/exceptions.hpp>
 
@@ -35,7 +36,8 @@ QMap<int, ExcelItem> Format2Parser::parse(const xlnt::worksheet &ws) const
 				&& (cell.font().bold() == true) )
 		{
 			ExcelItem item;
-			item.gName = QString::fromStdString(cell.value<std::string>());
+			std::string str = cell.value<std::string>();
+			item.gName = QString::fromStdString(str);
 			item.rateCount = -1;
 			result.insert(rowNum, item);
 
@@ -63,7 +65,8 @@ QMap<int, ExcelItem> Format2Parser::parse(const xlnt::worksheet &ws) const
 				 && (r.top_left().column().index == 7)
 				 && (r.top_right().column().index == 8) )
 			{
-				QString value = QString::fromStdString(cell.value<std::string>());
+				std::string str = cell.value<std::string>();
+				QString value = QString::fromStdString(str);
 
 				ExcelItem item;
 				if (cell.font().bold() == true)

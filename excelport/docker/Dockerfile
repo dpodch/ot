@@ -1,11 +1,11 @@
-FROM centos/devtoolset-6-toolchain-centos7
+FROM ot-boost
 
 USER root
-RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 COPY repo /repo
 WORKDIR /repo
 RUN yum install -y *.rpm
+RUN rm -r /usr/share/qt5/qtlogging.ini
 
 WORKDIR /opt/excelport/
 
-CMD ["./excelport_srv", "--config", "excelport_srv.xml"]
+CMD ["./excelport_srv", "-p", "12100", "-t", "10", "-d", "2"]
