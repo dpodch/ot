@@ -20,7 +20,7 @@ struct ExcelItem
 	LineType type = LT_NULL;
 	QString gName;
 	QString pName;
-	double rateCount = 0;
+	int rateCount = 0;
 };
 
 class IFormatParser

@@ -22,14 +22,18 @@ public:
 
 	Group* findGroup(const QString &name) const;
 
-	void addPeople(People *p);
-	void addGroup(Group *g);
+	bool addPeople(People *p);
+	bool addGroup(Group *g);
 
 	void clear();
 
 	static QVariantList toVariantList(const QList<Group*> &groups);
 
+	void setRateCount(int value);
+	void addRateCount(int value);
+
 private:
+	int rateCount = 0;
 	QString gTagName;
 	QString name;
 	QList<People*> peopleList;

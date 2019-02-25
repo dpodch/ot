@@ -8,6 +8,8 @@
 
 QMap<int, ExcelItem> Format1Parser::parse(const xlnt::worksheet &ws) const
 {
+	qDebug() << Q_FUNC_INFO << "...";
+
 	QMap<int, ExcelItem> result;
 
 	const int rateColumnNum = 8;
@@ -47,7 +49,7 @@ QMap<int, ExcelItem> Format1Parser::parse(const xlnt::worksheet &ws) const
 		{
 			item.type = LT_GROUP;
 			item.gName = QString::fromStdString(dataCell.value<std::string>());
-			item.rateCount = rateCell.value<double>();
+			item.rateCount = round(rateCell.value<double>() * 100);
 			result.insert(rowNum, item);
 			qDebug() << rowNum << item.gName << "[" << item.rateCount << "]";
 		}
@@ -63,7 +65,7 @@ QMap<int, ExcelItem> Format1Parser::parse(const xlnt::worksheet &ws) const
 				auto gCell = ws.cell(r.top_left().column(), rowNum);
 				item.pName = QString::fromStdString(dataCell.value<std::string>());
 				item.gName = QString::fromStdString(gCell.value<std::string>());
-				item.rateCount = rateCell.value<double>();
+				item.rateCount = round(rateCell.value<double>() * 100);
 				qDebug() << rowNum << item.gName
 						 << "--->" << item.pName
 						 << "[" << item.rateCount << "]";
@@ -72,5 +74,8 @@ QMap<int, ExcelItem> Format1Parser::parse(const xlnt::worksheet &ws) const
 		}
 		iter++;
 	}
+
+	qDebug() << Q_FUNC_INFO << "Done";
+
 	return result;
 }

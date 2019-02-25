@@ -23,6 +23,11 @@ QVariant People::toVariant() const
 	map.insert("birthday", birthday.toString("yyyy-MM-dd"));
 	map.insert("employment_date", employment_date.toString("yyyy-MM-dd"));
 
+	if (rateCount > 0)
+	{
+		map.insert("rate_count", (double)rateCount / 100);
+	}
+
 	return map;
 }
 
@@ -49,4 +54,9 @@ void People::setBirthday(const QDate &value)
 void People::setEmployment_date(const QDate &value)
 {
 	employment_date = value;
+}
+
+void People::setRateCount(int value)
+{
+	rateCount = value;
 }

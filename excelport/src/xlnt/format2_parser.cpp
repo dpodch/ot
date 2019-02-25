@@ -1,5 +1,6 @@
 
 #include <QDebug>
+#include <QTime>
 
 #include <QTextCodec>
 #include <xlnt/xlnt.hpp>
@@ -9,6 +10,11 @@
 
 QMap<int, ExcelItem> Format2Parser::parse(const xlnt::worksheet &ws) const
 {
+	QTime time;
+	time.start();
+
+	qDebug() << Q_FUNC_INFO << "...";
+
 	QMap<int, ExcelItem> result;
 
 	auto ranges = ws.merged_ranges();
@@ -39,6 +45,7 @@ QMap<int, ExcelItem> Format2Parser::parse(const xlnt::worksheet &ws) const
 			std::string str = cell.value<std::string>();
 			item.gName = QString::fromStdString(str);
 			item.rateCount = -1;
+
 			result.insert(rowNum, item);
 
 			iter++;
@@ -77,7 +84,8 @@ QMap<int, ExcelItem> Format2Parser::parse(const xlnt::worksheet &ws) const
 				{
 					item.pName = value;
 				}
-				item.rateCount = rateCell.value<double>();
+
+				item.rateCount = round(rateCell.value<double>() * 100);
 				result.insert(rowNum, item);
 
 				qDebug() << rowNum << (item.gName.isEmpty() ? item.pName : item.gName)
@@ -104,10 +112,14 @@ QMap<int, ExcelItem> Format2Parser::parse(const xlnt::worksheet &ws) const
 
 				ExcelItem item;
 				item.gName = value;
-				item.rateCount = rateCell.value<double>();
+				if (item.gName.isEmpty())
+				{
+					qDebug() <<"!!";
+				}
+				item.rateCount = round(rateCell.value<double>() * 100);
 				result.insert(rowNum, item);
 
-				qDebug() << rowNum << item.gName << "[" << item.rateCount << "]";
+//				qDebug() << rowNum << item.gName << "[" << item.rateCount << "]";
 			}
 			else
 			{
@@ -137,6 +149,9 @@ QMap<int, ExcelItem> Format2Parser::parse(const xlnt::worksheet &ws) const
 		}
 		else if (t.pName.isEmpty() == false)
 		{
+//			qDebug () << "rate"
+//					  << "\nto" << item.gName << item.rateCount
+//					  << "\nfrom"<< t.gName << t.pName << t.rateCount;
 			item.rateCount += t.rateCount;
 		}
 	}
@@ -145,6 +160,8 @@ QMap<int, ExcelItem> Format2Parser::parse(const xlnt::worksheet &ws) const
 	{
 		result.insert(row, item);
 	}
+
+	qDebug() << Q_FUNC_INFO << "Done" << time.elapsed();
 
 	return result;
 }

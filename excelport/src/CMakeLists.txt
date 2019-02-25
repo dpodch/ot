@@ -63,6 +63,7 @@ set(excelport_srv_SOURCES
 	xlnt/xlntparser.cpp
 	xlnt/format1_parser.cpp
 	xlnt/format2_parser.cpp
+	xlnt/format3_parser.cpp
 )
 
 set(excelport_srv_HEADERS

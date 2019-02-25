@@ -24,6 +24,10 @@ QVariant Group::toVariant() const
 
 	QVariantMap map;
 	map.insert("name", name);
+	if (rateCount > 0)
+	{
+		map.insert("rate_count", (double)rateCount / 100.);
+	}
 
 	QVariantList plistVar;
 	QVariantList glistVar;
@@ -107,16 +111,29 @@ Group *Group::findGroup(const QString &name) const
 	return res;
 }
 
-void Group::addPeople(People *p)
+bool Group::addPeople(People *p)
 {
 	Q_ASSERT (p != NULL);
+	if (!groupList.isEmpty())
+	{
+		qCritical() << "Error append people" << p->toVariant() << "to" << name;
+		return false;
+	}
 	peopleList.append(p);
+	return true;
 }
 
-void Group::addGroup(Group *g)
+bool Group::addGroup(Group *g)
 {
 	Q_ASSERT (g != NULL);
+
+	if (!peopleList.isEmpty())
+	{
+		qCritical() << "Error append group" << g->toVariant() << "to" << name;
+		return false;
+	}
 	groupList.append(g);
+	return true;
 }
 
 void Group::clear()
@@ -138,4 +155,14 @@ QVariantList Group::toVariantList(const QList<Group *> &groups)
 	}
 
 	return res;
+}
+
+void Group::setRateCount(int value)
+{
+	rateCount = value;
+}
+
+void Group::addRateCount(int value)
+{
+	rateCount += value;
 }

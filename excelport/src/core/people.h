@@ -16,8 +16,10 @@ public:
 	void setSurname(const QString &value);
 	void setBirthday(const QDate &value);
 	void setEmployment_date(const QDate &value);
+	void setRateCount(int value);
 
 private:
+	int rateCount = 0;
 	QString name;
 	QString patronymic;
 	QString surname;
