@@ -2,7 +2,7 @@
 %define version_major	0
 %define version_minor	1
 %define version_patch	1
-%define	version_build	3
+%define	version_build	4
 
 %define debug_package %{nil}
 
