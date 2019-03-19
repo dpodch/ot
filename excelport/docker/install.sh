@@ -30,8 +30,25 @@ do
 	echo "###activated service ${i}"
 done
 
-echo "Remove docker image ${DOCKER_IMAGE_NAME}"
-docker images -a | grep "${DOCKER_IMAGE_NAME}" | awk '{print $3}' | xargs docker rmi
+
+echo "##Stopping and removing docker container ${DOCKER_IMAGE_NAME}..."
+#docker rm $(docker stop $(docker ps -a -q --filter ancestor=${DOCKER_IMAGE_NAME} --format="{{.ID}}"))
+docker ps -a -q --filter ancestor=${DOCKER_IMAGE_NAME} --format="{{.ID}}" \
+	| xargs --no-run-if-empty docker stop \
+	| xargs --no-run-if-empty docker rm \
+		|| ERROR "stop docker ${DOCKER_IMAGE_NAME}"
+echo "##Stopping and removing docker container ${DOCKER_IMAGE_NAME} Done"
+
+
+echo "### Remove docker image ${DOCKER_IMAGE_NAME} ..."
+docker images -a | grep "${DOCKER_IMAGE_NAME}" | awk '{print $3}' | xargs --no-run-if-empty docker rmi \
+	 || ERROR "remove docker image ${DOCKER_IMAGE_NAME}"
+echo "### Remove docker image ${DOCKER_IMAGE_NAME} Done"
+
 docker load < ${DOCKER_IMAGE} || ERROR "Not load docker image ${DOCKER_IMAGE}"
 
-/bin/bash ${RUN_SCRIPT} ${DOCKER_IMAGE_NAME}
+echo "##Starting docker container ${DOCKER_IMAGE_NAME} Done"
+docker run --restart=always --log-driver=syslog --log-opt tag="EXCELPORT" -d -p 12100:12100 ${DOCKER_IMAGE_NAME}
+echo "##Starting docker container ${DOCKER_IMAGE_NAME} Done"
+
+echo "DONE"
