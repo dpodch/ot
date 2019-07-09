@@ -2,6 +2,8 @@
 #include <QDebug>
 #include <QTime>
 
+#include <math.h>
+
 #include <QTextCodec>
 #include <xlnt/xlnt.hpp>
 #include <utils/exceptions.hpp>

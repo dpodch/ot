@@ -36,7 +36,7 @@ mkdir -p build
 cd build
 
 # run cmake
-cmake -D CMAKE_BUILD_TYPE=Release \
+cmake3 -D CMAKE_BUILD_TYPE=Release \
 	-D excelport_srv_VERSION_MAJOR=%{version_major} \
 	-D excelport_srv_VERSION_MINOR=%{version_minor} \
 	-D excelport_srv_VERSION_PATCH=%{version_patch} \
